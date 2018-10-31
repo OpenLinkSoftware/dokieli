@@ -17,7 +17,8 @@ module.exports = {
     OIDC: false,
     WebIdDelegate: null
   },
-  OidcPopupUrl: 'https://solid.openlinksw.com:8444/common/popup.html',
+//  OidcPopupUrl: 'https://solid.openlinksw.com:8444/common/popup.html',
+  OidcPopupUrl: 'https://openlinksoftware.github.io/dokieli/popup.html',
   LocalDocument: (document.location.protocol == 'file:'),
   UseStorage: false,
   AutoSaveId: '',
