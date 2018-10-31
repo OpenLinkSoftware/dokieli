@@ -1003,7 +1003,7 @@ function getResourceGraph (iri, headers, options = {}) {
   }
 
 //???
-/***
+/***/
   if (iri.slice(0, 5).toLowerCase() === 'http:') {
     options['noCredentials'] = true
 
@@ -1011,7 +1011,7 @@ function getResourceGraph (iri, headers, options = {}) {
       options['forceProxy'] = true
     }
   }
-***/
+/***/
 
   let pIRI = uri.getProxyableIRI(iri, options)
 
