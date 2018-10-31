@@ -47,7 +47,9 @@ cp -va $SRC_DIR/media/images/logo16.png               $EXT_DIRNAME/media/images/
 cp -va $SRC_DIR/media/images/logo48.png               $EXT_DIRNAME/media/images/
 
 cp -va $SRC_DIR/scripts/do.js                         $EXT_DIRNAME/scripts/
+cp -va $SRC_DIR/scripts/do.js.map                     $EXT_DIRNAME/scripts/
 cp -va $SRC_DIR/scripts/medium-editor-tables.min.js   $EXT_DIRNAME/scripts/
 cp -va $SRC_DIR/scripts/medium-editor.min.js          $EXT_DIRNAME/scripts/
 cp -va $SRC_DIR/scripts/simplerdf.js                  $EXT_DIRNAME/scripts/
-
+cp -va $SRC_DIR/scripts/solid-auth-client.bundle.js   $EXT_DIRNAME/scripts/
+cp -va $SRC_DIR/scripts/solid-auth-client.bundle.js.map   $EXT_DIRNAME/scripts/
