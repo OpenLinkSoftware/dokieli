@@ -1002,7 +1002,6 @@ function getResourceGraph (iri, headers, options = {}) {
     Object.assign(headers, defaultHeaders)
   }
 
-//???
 /***/
   if (iri.slice(0, 5).toLowerCase() === 'http:') {
     options['noCredentials'] = true
@@ -9595,54 +9594,74 @@ function getUserSignedInHTML() {
 }
 
 
+
 function showUserSigninSignout (node) {
   var userInfo = document.getElementById('user-info');
 
   if (!userInfo) {
     var s = ''
 
-    if (Config.User.IRI) {
-      s = getUserSignedInHTML()
-    }
-    else {
-      s = '<button class="signin-user" title="Sign in to authenticate"><i class="fa fa-user-secret fa-2x"></i>Sign in</button>'
-    }
+    solid.auth.trackSession(session => {
+      var webId = session ? session.webId : null;
 
-    node.insertAdjacentHTML('beforeend', '<section id="user-info">' + s + '</section>')
-
-    userInfo = document.getElementById('user-info')
-
-    userInfo.addEventListener('click', function(e) {
-      e.preventDefault()
-      e.stopPropagation()
-
-      if (Config.User.OIDC && solid && solid.auth) {
-        solid.auth.logout();
+      if (webId && webId != Config.User.IRI) {
+        setUserInfo(webId, true)
+          .then(() => {
+            showUserSigninSignoutEnd(node);
+          })
+      } else {
+         showUserSigninSignoutEnd(node);
       }
-
-      if (e.target.closest('.signout-user')) {
-        storage.removeStorageProfile()
-
-        Config.User = {
-          IRI: null,
-          Role: null,
-          UI: {}
-        }
-
-        util.removeChildren(node);
-
-        showUserSigninSignout(document.querySelector('#document-menu header'))
-      }
-    });
-
-    var su = document.querySelector('#document-menu button.signin-user')
-    if (su) {
-      su.addEventListener('click', showUserIdentityInput)
-    }
-
-    var rA = document.querySelector('#document-menu .resource-activities')
-    if(rA) { rA.setAttribute('disabled', 'disabled') }
+    })
   }
+}
+
+
+function showUserSigninSignoutEnd (node) {
+  var s = ''
+
+  if (Config.User.IRI) {
+    s = getUserSignedInHTML()
+  }
+  else {
+    s = '<button class="signin-user" title="Sign in to authenticate"><i class="fa fa-user-secret fa-2x"></i>Sign in</button>'
+  }
+
+  node.insertAdjacentHTML('beforeend', '<section id="user-info">' + s + '</section>')
+
+  var userInfo = document.getElementById('user-info')
+
+  userInfo.addEventListener('click', function(e) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (Config.User.OIDC && solid && solid.auth) {
+      solid.auth.logout();
+    }
+
+    if (e.target.closest('.signout-user')) {
+      storage.removeStorageProfile()
+
+      Config.User = {
+        IRI: null,
+        Role: null,
+        UI: {}
+      }
+
+      util.removeChildren(node);
+
+      showUserSigninSignout(document.querySelector('#document-menu header'))
+    }
+  });
+
+  var su = document.querySelector('#document-menu button.signin-user')
+  if (su) {
+    su.addEventListener('click', showUserIdentityInput)
+  }
+
+  var rA = document.querySelector('#document-menu .resource-activities')
+  if(rA) { rA.setAttribute('disabled', 'disabled') }
+
 }
 
 
@@ -9652,9 +9671,9 @@ function showUserIdentityInput (e) {
   }
 
   var webid = Config.User.WebIdDelegate ? Config.User.WebIdDelegate : "";
-  var code = '<aside id="user-identity-input" class="do on">' + DO.C.Button.Close + '<h2>Sign in with WebID</h2><label>HTTP(S) IRI</label> <input id="webid" type="text" placeholder="http://csarven.ca/#i" value="'+webid+'" name="webid"/> <button class="signin">Sign in</button>';
+  var code = '<aside id="user-identity-input" class="do on">' + DO.C.Button.Close + '<h2>WebID-TLS Authentication</h2><label>WebID:</label> <input id="webid" type="text" placeholder="http://csarven.ca/#i" value="'+webid+'" name="webid"/> <button class="signin">Login</button>';
   if (window.location.protocol === "https:")
-    code += ' <h2>Sign in with OIDC</h2> <button class="signin_oidc">Sign in OIDC</button>';
+    code += ' <h2>WebID-OIDC Authentication</h2> <button class="signin_oidc">Select Identity Provider</button>';
 
   code += ' </aside>';
 

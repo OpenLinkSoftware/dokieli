@@ -236,7 +236,6 @@ function getResourceGraph (iri, headers, options = {}) {
     Object.assign(headers, defaultHeaders)
   }
 
-//???
 /***/
   if (iri.slice(0, 5).toLowerCase() === 'http:') {
     options['noCredentials'] = true
