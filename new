@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <title></title>
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <link href="https://dokie.li/media/css/basic.css" media="all" rel="stylesheet" title="Basic" />
-    <link href="https://dokie.li/media/css/do.css" media="all" rel="stylesheet" />
+    <link href="https://openlinksoftware.github.io/dokieli/media/css/basic.css" media="all" rel="stylesheet" title="Basic" />
+    <link href="https://openlinksoftware.github.io/dokieli/media/css/do.css" media="all" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" media="all" rel="stylesheet" />
     <script src="https://openlinksoftware.github.io/dokieli/scripts/simplerdf.js"></script>
     <script src="https://openlinksoftware.github.io/dokieli/scripts/medium-editor.min.js"></script>
