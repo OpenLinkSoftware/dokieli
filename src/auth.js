@@ -78,14 +78,10 @@ function showUserSigninSignout (node) {
       if (webId && webId != Config.User.IRI) {
         setUserInfo(webId, true)
           .then(() => {
-            userInfo = document.getElementById('user-info');
-            if (!userInfo)
-              showUserSigninSignoutEnd(node);
+            showUserSigninSignoutEnd(node);
           })
       } else {
-         userInfo = document.getElementById('user-info');
-         if (!userInfo)
-           showUserSigninSignoutEnd(node);
+         showUserSigninSignoutEnd(node);
       }
     })
   }
