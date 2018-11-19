@@ -3,6 +3,26 @@
  * Configuration
  */
 module.exports = {
+  init: function() {
+    if(document.body) {
+      DO.U.initUser();
+      DO.U.initCurrentStylesheet();
+      DO.U.setPolyfill();
+      DO.U.setDocRefType();
+      DO.U.showRefs();
+      DO.U.buttonClose();
+      DO.U.highlightItems();
+      DO.U.initDocumentActions();
+      DO.U.getResourceInfo();
+      DO.U.showTextQuoteSelector();
+      DO.U.showDocumentInfo();
+      DO.U.showFragment();
+      DO.U.showRobustLinks();
+      DO.U.setDocumentMode();
+      DO.U.showInboxNotifications();
+      DO.U.initMath();
+    }
+  },
   Lang: document.documentElement.lang,
   DocRefType: '',
   RefType: {
@@ -17,12 +37,13 @@ module.exports = {
     OIDC: false,
     WebIdDelegate: null
   },
-//  OidcPopupUrl: 'https://solid.openlinksw.com:8444/common/popup.html',
+//  OidcPopupUrl: 'https://dokie.li/popup.html',
   OidcPopupUrl: 'https://openlinksoftware.github.io/dokieli/popup.html',
   LocalDocument: (document.location.protocol == 'file:'),
   UseStorage: false,
   AutoSaveId: '',
   AutoSaveTimer: 60000,
+  AvatarSize: 48,
   DisableStorageButtons: '<button class="local-storage-disable-html" title="Disable local storage (temporary) in the browser"><i class="fa fa-database fa-2x"></i>Local Storage</button>',
   EnableStorageButtons: '<button class="local-storage-enable-html" title="Enable local storage (temporary) in the browser"><i class="fa fa-database fa-2x"></i>Local Storage</button>',
   CDATAStart: '//<![CDATA[',
@@ -30,7 +51,7 @@ module.exports = {
   SortableList: false,
   GraphViewerAvailable: (typeof d3 !== 'undefined'),
   MathAvailable: (typeof MathJax !== 'undefined'),
-  EditorAvailable: (typeof MediumEditor !== 'undefined'),
+  EditorAvailable: true,
   EditorEnabled: false,
   ContentEditable: false,
   WebExtension: ((window.chrome && chrome.runtime && chrome.runtime.id) || (typeof browser !== 'undefined' && browser.runtime && browser.runtime.id)),
@@ -129,7 +150,6 @@ module.exports = {
     'table-of-figures',
     'table-of-tables',
     'table-of-abbrs',
-    'authors',
     'abstract',
     'categories-and-subject-descriptors',
     'keywords',

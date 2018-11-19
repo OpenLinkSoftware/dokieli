@@ -5,6 +5,7 @@ const fetcher = require('./fetcher')
 const util = require('./util')
 const uri = require('./uri')
 const storage = require('./storage')
+const solidAuth = require('solid-auth-client')
 
 // const { OIDCWebClient } = require('@trust/oidc-web')
 
@@ -31,7 +32,10 @@ module.exports = {
 }
 
 
-function getUserHTML () {
+function getUserHTML (options) {
+  options = options || {};
+  var avatarSize = ('avatarSize' in options) ? options.avatarSize : Config['AvatarSize'];
+
   let userName = Config.SecretAgentNames[Math.floor(Math.random() * Config.SecretAgentNames.length)]
 
   if (Config.User.Name) {
@@ -43,8 +47,8 @@ function getUserHTML () {
   let userImage = ''
 
   if ('Image' in Config.User && typeof Config.User.Image !== 'undefined' && Config.User.Image.length > 0) {
-    userImage = '<img alt="" height="48" rel="schema:image" src="' +
-      Config.User.Image + '" width="48" /> '
+    userImage = '<img alt="" height="' + avatarSize + '" rel="schema:image" src="' +
+      Config.User.Image + '" width="' + avatarSize + '" /> '
   }
 
   let user = ''
@@ -72,7 +76,7 @@ function showUserSigninSignout (node) {
   if (!userInfo) {
     var s = ''
 
-    solid.auth.trackSession(session => {
+    solidAuth.trackSession(session => {
       var webId = session ? session.webId : null;
 
       if (webId && webId != Config.User.IRI) {
@@ -110,22 +114,28 @@ function showUserSigninSignoutEnd (node) {
     e.preventDefault()
     e.stopPropagation()
 
-    if (Config.User.OIDC && solid && solid.auth) {
-      solid.auth.logout();
-    }
-
     if (e.target.closest('.signout-user')) {
+      if (Config.User.OIDC) {
+        solidAuth.logout();
+      }
+
       storage.removeStorageProfile()
 
       Config.User = {
         IRI: null,
-        Role: null,
+        Role: 'social',
         UI: {}
       }
 
       util.removeChildren(node);
 
-      showUserSigninSignout(document.querySelector('#document-menu header'))
+      var documentMenu = document.querySelector('#document-menu')
+
+      showUserSigninSignout(documentMenu.querySelector('header'))
+
+      var ra = documentMenu.querySelector('.resource-activities');
+      ra.disabled = true;
+      ra.innerHTML = '<i class="fa fa-bolt fa-2x"></i>Activities';
     }
   });
 
@@ -146,13 +156,13 @@ function showUserIdentityInput (e) {
   }
 
   var webid = Config.User.WebIdDelegate ? Config.User.WebIdDelegate : "";
-  var code = '<aside id="user-identity-input" class="do on">' + DO.C.Button.Close + '<h2>WebID-TLS Authentication</h2><label>WebID:</label> <input id="webid" type="text" placeholder="http://csarven.ca/#i" value="'+webid+'" name="webid"/> <button class="signin">Login</button>';
+  var code = '<aside id="user-identity-input" class="do on">' + Config.Button.Close + '<h2>WebID-TLS Authentication</h2><label>WebID:</label> <input id="webid" type="text" placeholder="http://csarven.ca/#i" value="'+webid+'" name="webid"/> <button class="signin">Login</button>';
   if (window.location.protocol === "https:")
-    code += ' <h2>WebID-OIDC Authentication</h2> <button class="signin_oidc">Select Identity Provider</button>';
+    code += ' <h2>WebID-OIDC Authentication</h2> <button class="signin-oidc">Select Identity Provider</button>';
 
   code += ' </aside>';
 
-  document.documentElement.appendChild(DO.U.fragmentFromString(code))
+  document.documentElement.appendChild(util.fragmentFromString(code))
 
   var buttonSignIn = document.querySelector('#user-identity-input button.signin')
   if (! Config.User.WebIdDelegate)
@@ -167,20 +177,23 @@ function showUserIdentityInput (e) {
     }
   })
 
-  var inputWebid = document.querySelector('#user-identity-input input#webid')
+  var inputWebID = document.querySelector('#user-identity-input input#webid')
+  if(inputWebID) {
+    buttonSignIn.addEventListener('click', submitSignIn)
 
-  buttonSignIn.addEventListener('click', submitSignIn)
+    let events = ['keyup', 'cut', 'paste', 'input']
 
-  let events = ['keyup', 'cut', 'paste', 'input']
+    events.forEach(eventType => {
+      inputWebID.addEventListener(eventType, e => { enableDisableButton(e, buttonSignIn) })
+    })
+  }
 
-  events.forEach(eventType => {
-    inputWebid.addEventListener(eventType, e => { enableDisableButton(e, buttonSignIn) })
-  })
+  var buttonSignInOIDC = document.querySelector('#user-identity-input button.signin-oidc')
+  if (buttonSignInOIDC) {
+    buttonSignInOIDC.addEventListener('click', submitSignInOIDC)
+  }
 
-  var buttonSignInOIDC = document.querySelector('#user-identity-input button.signin_oidc')
-  buttonSignInOIDC.addEventListener('click', submitSignInOIDC)
-
-  inputWebid.focus()
+  inputWebID.focus()
 }
 
 
@@ -216,7 +229,7 @@ function submitSignIn (url) {
 
   if (typeof url !== 'string') {
     if (userIdentityInput) {
-      userIdentityInput.insertAdjacentHTML('beforeend',
+      userIdentityInput.querySelector('#user-identity-input-webid').insertAdjacentHTML('beforeend',
         '<i class="fa fa-circle-o-notch fa-spin fa-fw"></i>')
     }
 
@@ -250,32 +263,30 @@ function submitSignInOIDC (url) {
 
   var popupUri = Config.OidcPopupUrl;
 
-  if (solid && solid.auth) {
-    solid.auth
-      .popupLogin({ popupUri })
-      .then((session) => {
-         if (session && session.webId) {
-           console.log("Connected:", session.webId);
-           setUserInfo(session.webId, true)
-            .then(() => {
-              var uI = document.getElementById('user-info')
-              if (uI) {
-                util.removeChildren(uI);
-                uI.insertAdjacentHTML('beforeend', getUserSignedInHTML());
-              }
+  solidAuth
+    .popupLogin({ popupUri })
+    .then((session) => {
+       if (session && session.webId) {
+         console.log("Connected:", session.webId);
+         setUserInfo(session.webId, true)
+          .then(() => {
+            var uI = document.getElementById('user-info')
+            if (uI) {
+              util.removeChildren(uI);
+              uI.insertAdjacentHTML('beforeend', getUserSignedInHTML());
+            }
 
-              if (userIdentityInput) {
-                userIdentityInput.parentNode.removeChild(userIdentityInput)
-              }
+            if (userIdentityInput) {
+              userIdentityInput.parentNode.removeChild(userIdentityInput)
+            }
 
-              afterSignIn()
-            })
-         }
-      }).catch((err) => {
-        console.log('submitSignInOIDC - '+err);
-        return Promise.resolve();
-      });
-  }
+            afterSignIn()
+          })
+       }
+    }).catch((err) => {
+      console.log('submitSignInOIDC - '+err);
+      return Promise.resolve();
+    });
 }
 
 /**
