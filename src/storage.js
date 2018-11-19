@@ -33,7 +33,7 @@ function enableStorage(key) {
   try {
     JSON.parse(o).object.Document;
     document.documentElement.innerHTML = JSON.parse(o).object.content;
-    DO.U.init();
+    Config.init();
   } catch(e){}
   console.log(util.getDateTimeISO() + ': ' + key + ' storage enabled.');
   enableAutoSave(key);
@@ -49,7 +49,7 @@ function disableStorage(key) {
 function updateStorageDocument(key) {
   var content = doc.getDocument();
 
-  var id = DO.U.generateUUID();
+  var id = util.generateUUID();
   var o = localStorage.getItem(key);
 
   var datetime = util.getDateTimeISO();
@@ -85,7 +85,7 @@ function disableAutoSave(key) {
 function removeStorageItem(key) {
   if (!key) { Promise.resolve(); }
 
-  console.log(util.getDateTimeISO() + ': ' + key + ' removed.')
+  // console.log(util.getDateTimeISO() + ': ' + key + ' removed.')
 
   if (Config.WebExtension) {
     var browser = (typeof browser !== 'undefined') ? browser : chrome;
@@ -115,7 +115,6 @@ function getStorageProfile(key) {
     }
     else {
       var value = {};
-
       chrome.storage.sync.get(key, function(o){ value = o[key]; })
 
       return new Promise(function(resolve, reject){
@@ -139,7 +138,7 @@ function updateStorageProfile(User) {
 
   var key = 'DO.C.User'
 
-  var id = DO.U.generateUUID();
+  var id = util.generateUUID();
   var datetime = util.getDateTimeISO();
 
   //because.. cyclic
@@ -173,7 +172,7 @@ function updateStorageProfile(User) {
     }
   }
   else if (window.localStorage) {
-    console.log(datetime + ': User ' + User.IRI + ' saved.');
+    // console.log(datetime + ': User ' + User.IRI + ' saved.');
     return Promise.resolve(localStorage.setItem(key, JSON.stringify(object)));
   }
   else {
