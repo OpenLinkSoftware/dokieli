@@ -64184,13 +64184,14 @@ function showUserSigninSignoutEnd (node) {
 }
 
 
+
 function showUserIdentityInput (e) {
   if (typeof e !== 'undefined') {
     e.target.disabled = true
   }
 
   var webid = Config.User.WebIdDelegate ? Config.User.WebIdDelegate : "";
-  var code = '<aside id="user-identity-input" class="do on">' + Config.Button.Close + '<h2>WebID-TLS Authentication</h2><label>WebID:</label> <input id="webid" type="text" placeholder="http://csarven.ca/#i" value="'+webid+'" name="webid"/> <button class="signin">Login</button>';
+  var code = '<aside id="user-identity-input" class="do on">' + Config.Button.Close + '<h2>WebID-TLS Authentication</h2><p id="user-identity-input-webid"><label>WebID:</label> <input id="webid" type="text" placeholder="http://csarven.ca/#i" value="'+webid+'" name="webid"/> <button class="signin">Login</button>';
   if (window.location.protocol === "https:")
     code += ' <h2>WebID-OIDC Authentication</h2> <button class="signin-oidc">Select Identity Provider</button>';
 
