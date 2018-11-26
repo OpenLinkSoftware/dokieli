@@ -873,6 +873,21 @@ var DO = {
     },
 
     initDocumentActions: function() {
+      //iteraction with YouID content script for get current WebId
+      window.addEventListener("message", function(event) {
+        var ev_data;
+        if (String(event.data).lastIndexOf("youid_rc:",0)!==0)
+          return;
+
+        try {
+          ev_data = JSON.parse(event.data.substr(9));
+        } catch(e) {}
+
+        if (ev_data && ev_data.webid) {
+          DO.C.User.WebIdDelegate = ev_data.webid;
+        }
+      }, false);
+
       document.addEventListener('click', function(e) {
         if (e.target.closest('[about="#document-menu"][typeof="schema:ActivateAction"], [href="#document-menu"][typeof="schema:ActivateAction"], [resource="#document-menu"][typeof="schema:ActivateAction"]')) {
           e.preventDefault();
