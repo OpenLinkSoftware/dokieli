@@ -987,6 +987,21 @@ var DO = {
     },
 
     initDocumentActions: function() {
+      //iteraction with YouID content script for get current WebId
+      window.addEventListener("message", function(event) {
+        var ev_data;
+        if (String(event.data).lastIndexOf("youid_rc:",0)!==0)
+          return;
+
+        try {
+          ev_data = JSON.parse(event.data.substr(9));
+        } catch(e) {}
+
+        if (ev_data && ev_data.webid) {
+          DO.C.User.WebIdDelegate = ev_data.webid;
+        }
+      }, false);
+
       document.addEventListener('click', function(e) {
         if (e.target.closest('[about="#document-menu"][typeof="schema:ActivateAction"], [href="#document-menu"][typeof="schema:ActivateAction"], [resource="#document-menu"][typeof="schema:ActivateAction"]')) {
           e.preventDefault();
@@ -64104,6 +64119,9 @@ function getUserSignedInHTML() {
 
 
 function showUserSigninSignout (node) {
+  // request current WebId from YouID.extension content script
+  window.postMessage('youid:{"getWebId": true}', "*");
+
   var userInfo = document.getElementById('user-info');
 
   if (!userInfo) {
@@ -64185,49 +64203,56 @@ function showUserSigninSignoutEnd (node) {
 
 
 function showUserIdentityInput (e) {
-  if (typeof e !== 'undefined') {
-    e.target.disabled = true
-  }
+  // request current WebId from YouID.extension content script
+  window.postMessage('youid:{"getWebId": true}', "*");
 
-  var webid = Config.User.WebIdDelegate ? Config.User.WebIdDelegate : "";
-  var code = '<aside id="user-identity-input" class="do on">' + Config.Button.Close + '<h2>WebID-TLS Authentication</h2><p id="user-identity-input-webid"><label>WebID:</label> <input id="webid" type="text" placeholder="http://csarven.ca/#i" value="'+webid+'" name="webid"/> <button class="signin">Login</button>';
-  if (window.location.protocol === "https:")
-    code += ' <h2>WebID-OIDC Authentication</h2> <button class="signin-oidc">Select Identity Provider</button>';
+  window.setTimeout(function () {
 
-  code += ' </aside>';
-
-  document.documentElement.appendChild(util.fragmentFromString(code))
-
-  var buttonSignIn = document.querySelector('#user-identity-input button.signin')
-  if (! Config.User.WebIdDelegate)
-    buttonSignIn.setAttribute('disabled', 'disabled')
-
-  document.querySelector('#user-identity-input').addEventListener('click', e => {
-    if (e.target.closest('button.close')) {
-      var signinUser = document.querySelector('#document-menu button.signin-user')
-      if (signinUser) {
-        signinUser.disabled = false
-      }
+    if (typeof e !== 'undefined') {
+      e.target.disabled = true
     }
-  })
 
-  var inputWebID = document.querySelector('#user-identity-input input#webid')
-  if(inputWebID) {
-    buttonSignIn.addEventListener('click', submitSignIn)
+    var webid = Config.User.WebIdDelegate ? Config.User.WebIdDelegate : "";
+    var code = '<aside id="user-identity-input" class="do on">' + Config.Button.Close + '<h2>WebID-TLS Authentication</h2><p id="user-identity-input-webid"><label>WebID:</label> <input id="webid" type="text" placeholder="http://csarven.ca/#i" value="'+webid+'" name="webid"/> <button class="signin">Login</button>';
+    if (window.location.protocol === "https:")
+      code += ' <h2>WebID-OIDC Authentication</h2> <button class="signin-oidc">Select Identity Provider</button>';
 
-    let events = ['keyup', 'cut', 'paste', 'input']
+    code += ' </aside>';
 
-    events.forEach(eventType => {
-      inputWebID.addEventListener(eventType, e => { enableDisableButton(e, buttonSignIn) })
+    document.documentElement.appendChild(util.fragmentFromString(code))
+
+    var buttonSignIn = document.querySelector('#user-identity-input button.signin')
+    if (! Config.User.WebIdDelegate)
+      buttonSignIn.setAttribute('disabled', 'disabled')
+
+    document.querySelector('#user-identity-input').addEventListener('click', e => {
+      if (e.target.closest('button.close')) {
+        var signinUser = document.querySelector('#document-menu button.signin-user')
+        if (signinUser) {
+          signinUser.disabled = false
+        }
+      }
     })
-  }
 
-  var buttonSignInOIDC = document.querySelector('#user-identity-input button.signin-oidc')
-  if (buttonSignInOIDC) {
-    buttonSignInOIDC.addEventListener('click', submitSignInOIDC)
-  }
+    var inputWebID = document.querySelector('#user-identity-input input#webid')
+    if(inputWebID) {
+      buttonSignIn.addEventListener('click', submitSignIn)
 
-  inputWebID.focus()
+      let events = ['keyup', 'cut', 'paste', 'input']
+
+      events.forEach(eventType => {
+        inputWebID.addEventListener(eventType, e => { enableDisableButton(e, buttonSignIn) })
+      })
+    }
+
+    var buttonSignInOIDC = document.querySelector('#user-identity-input button.signin-oidc')
+    if (buttonSignInOIDC) {
+      buttonSignInOIDC.addEventListener('click', submitSignInOIDC)
+    }
+
+    inputWebID.focus()
+
+  }, 500)
 }
 
 
