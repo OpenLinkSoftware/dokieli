@@ -64117,8 +64117,8 @@ function getUserSignedInHTML() {
 }
 
 
-
-function showUserSigninSignout (node) {
+/***
+async function showUserSigninSignout (node) {
   // request current WebId from YouID.extension content script
   window.postMessage('youid:{"getWebId": true}', "*");
 
@@ -64127,22 +64127,21 @@ function showUserSigninSignout (node) {
   if (!userInfo) {
     var s = ''
 
-    solidAuth.trackSession(session => {
-      var webId = session ? session.webId : null;
+    const session = await solid.auth.currentSession();
+    var webId = session ? session.webId : null;
 
-      if (webId && webId != Config.User.IRI) {
-        setUserInfo(webId, true)
-          .then(() => {
-            userInfo = document.getElementById('user-info');
-            if (!userInfo)
-              showUserSigninSignoutEnd(node);
-          })
-      } else {
-         userInfo = document.getElementById('user-info');
-         if (!userInfo)
-           showUserSigninSignoutEnd(node);
-      }
-    })
+    if (webId && webId != Config.User.IRI) {
+       setUserInfo(webId, true)
+        .then(() => {
+          userInfo = document.getElementById('user-info');
+          if (!userInfo)
+            showUserSigninSignoutEnd(node);
+        })
+    } else {
+       userInfo = document.getElementById('user-info');
+       if (!userInfo)
+         showUserSigninSignoutEnd(node);
+    }
   }
 }
 
@@ -64161,13 +64160,13 @@ function showUserSigninSignoutEnd (node) {
 
   var userInfo = document.getElementById('user-info')
 
-  userInfo.addEventListener('click', function(e) {
+  userInfo.addEventListener('click', async function(e) {
     e.preventDefault()
     e.stopPropagation()
 
     if (e.target.closest('.signout-user')) {
       if (Config.User.OIDC) {
-        solidAuth.logout();
+        await solidAuth.logout();
       }
 
       storage.removeStorageProfile()
@@ -64199,6 +64198,79 @@ function showUserSigninSignoutEnd (node) {
   if(rA) { rA.setAttribute('disabled', 'disabled') }
 
 }
+*********/
+async function showUserSigninSignout (node) {
+  // request current WebId from YouID.extension content script
+  window.postMessage('youid:{"getWebId": true}', "*");
+
+  var userInfo = document.getElementById('user-info');
+
+  if (!userInfo) {
+    var s = ''
+
+    const session = await solid.auth.currentSession();
+    var webId = session ? session.webId : null;
+
+    if (webId && webId != Config.User.IRI) {
+       await setUserInfo(webId, true);
+       userInfo = document.getElementById('user-info');
+    }
+
+    if (!userInfo) {
+
+      if (Config.User.IRI) {
+        s = getUserSignedInHTML()
+      }
+      else {
+        s = '<button class="signin-user" title="Sign in to authenticate"><i class="fa fa-user-secret fa-2x"></i>Sign in</button>'
+      }
+
+      node.insertAdjacentHTML('beforeend', '<section id="user-info">' + s + '</section>')
+
+      var userInfo = document.getElementById('user-info')
+
+      userInfo.addEventListener('click', async function(e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        if (e.target.closest('.signout-user')) {
+          if (Config.User.OIDC) {
+            await solidAuth.logout();
+          }
+
+          storage.removeStorageProfile()
+
+          Config.User = {
+            IRI: null,
+            Role: 'social',
+            UI: {}
+          }
+
+          util.removeChildren(node);
+
+          var documentMenu = document.querySelector('#document-menu')
+
+          showUserSigninSignout(documentMenu.querySelector('header'))
+
+          var ra = documentMenu.querySelector('.resource-activities');
+          ra.disabled = true;
+          ra.innerHTML = '<i class="fa fa-bolt fa-2x"></i>Activities';
+        }
+      });
+
+      var su = document.querySelector('#document-menu button.signin-user')
+      if (su) {
+        su.addEventListener('click', showUserIdentityInput)
+      }
+
+      var rA = document.querySelector('#document-menu .resource-activities')
+      if(rA) { rA.setAttribute('disabled', 'disabled') }
+    }
+
+  }
+}
+
+
 
 
 
@@ -64252,7 +64324,7 @@ function showUserIdentityInput (e) {
 
     inputWebID.focus()
 
-  }, 500)
+  }, 300)
 }
 
 
