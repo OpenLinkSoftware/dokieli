@@ -42,12 +42,10 @@
 
       function dokieliInit(tab) 
       {
-        injectResources(tab.id, [ "media/css/do.css", "media/css/font-awesome.min.css", "media/css/editor.css"]).then(() => {
+        injectResources(tab.id, [ "media/css/do.css"]).then(() => {
         }).catch(err => {
            console.log('Error occurred: '+err);
         });
-
-        WebExtension.tabs.insertCSS(tab.id, {"code": "@font-face{font-family:'FontAwesome' ;src:url('" + WebExtension.extension.getURL('/media/fonts/fontawesome-webfont.eot?v=4.7.0') + "');src:url('" + WebExtension.extension.getURL('/media/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') + "') format('embedded-opentype'),url('" + WebExtension.extension.getURL('/media/fonts/fontawesome-webfont.woff2?v=4.7.0') + "') format('woff2'),url('" + WebExtension.extension.getURL('/media/fonts/fontawesome-webfont.woff?v=4.7.0') + "') format('woff'),url('" + WebExtension.extension.getURL('/media/fonts/fontawesome-webfont.ttf?v=4.7.0') + "') format('truetype'),url('" + WebExtension.extension.getURL('/media/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') + "') format('svg'); }"});
       }
 
       function showDocumentMenu(tab)
