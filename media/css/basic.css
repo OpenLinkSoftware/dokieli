@@ -33,9 +33,11 @@ color:#000 !important;
 
 } /* media print */
 
+html {
+font-family: sans-serif;
+}
 
 body {
-font-family: sans-serif;
 font-size: 1.1em;
 line-height: 1.3;
 margin: 0 auto;
@@ -90,40 +92,40 @@ text-align:left;
 text-align:center;
 }
 
-article[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) {
+*[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) {
 counter-increment:section;
 counter-reset:sub-section;
 }
-article[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) section {
+*[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) section {
 counter-increment:sub-section;
 counter-reset:sub-sub-section;
 }
-article[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) section section {
+*[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) section section {
 counter-increment:sub-sub-section;
 counter-reset:sub-sub-sub-section;
 }
-article[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) section section section {
+*[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) section section section {
 counter-increment:sub-sub-sub-section;
 counter-reset:sub-sub-sub-sub-section;
 }
-article[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) section section section section {
+*[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]) section section section section {
 counter-increment:sub-sub-sub-sub-section;
 counter-reset:sub-sub-sub-sub-sub-section;
 }
 
-article[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]):not([id^=table-of-]) > h2:before {
+*[typeof*="ScholarlyArticle"] section[inlist]:not([id=abstract]):not([id=document-status]):not([id=keywords]):not([id=references]):not([id=categories-and-subject-descriptors]):not([id=general-terms]):not([id=appendix]):not([id=contact-us]):not([id=declaration]):not([id=acknowledgements]):not([id^=table-of-]) > h2:before {
 content:counter(section) ".\00a0\00a0\00a0\00a0";
 }
-article[typeof*="ScholarlyArticle"] section[inlist] > h3:before {
+*[typeof*="ScholarlyArticle"] section[inlist] > h3:before {
 content:counter(section) "." counter(sub-section) "\00a0\00a0\00a0";
 }
-article[typeof*="ScholarlyArticle"] section[inlist] > h4:before {
+*[typeof*="ScholarlyArticle"] section[inlist] > h4:before {
 content:counter(section)"." counter(sub-section) "." counter(sub-sub-section) "\00a0\00a0\00a0";
 }
-article[typeof*="ScholarlyArticle"] section[inlist] > h5:before {
+*[typeof*="ScholarlyArticle"] section[inlist] > h5:before {
 content:counter(section)"." counter(sub-section) "." counter(sub-sub-section) "." counter(sub-sub-sub-section) "\00a0\00a0\00a0";
 }
-article[typeof*="ScholarlyArticle"] section[inlist] > h6:before {
+*[typeof*="ScholarlyArticle"] section[inlist] > h6:before {
 content:counter(section)"." counter(sub-section) "." counter(sub-sub-section) "." counter(sub-sub-sub-section) "." counter(sub-sub-sub-sub-section) "\00a0\00a0\00a0";
 }
 
@@ -377,7 +379,6 @@ em.rfc2119 { color: #900; }
 ul { padding: 0; margin-bottom:1em; list-style-position: inside; }
 nav ul { list-style: none; }
 dt { font-weight: bold; }
-dt i.fa { margin-right:0.5em;}
 
 /*h3 + div section:before,*/
 section + p:before,
@@ -398,11 +399,11 @@ dd + dt { margin-top: 1em; }
 
 p + dl { margin-top:0; }
 
-hr {
+section + hr, blockquote + hr, p + hr, ul + hr, ol + hr {
 border:0;
 text-align:center;
 }
-hr:before {
+section + hr:before, blockquote + hr:before, p + hr:before, ul + hr:before, ol + hr:before {
 content:"\2042";
 }
 
@@ -771,8 +772,7 @@ text-align: center;
 overflow: hidden;
 padding-top: 1em;
 padding-bottom: 1em;
-background-color: #333;
-color: #eee;
+background-color: #eee;
 }
 #dokieli-features a {
 background-color:inherit;
@@ -797,9 +797,13 @@ margin: 0;
 #dokieli-features li span:first-child {
 display: inline-block;
 }
+#dokieli-features ul li span:first-of-type {
+font-weight:bold;
+}
+
 #dokieli-features li span:last-child {
 display: inline-block;
-color: #a8a8a8;
+color: #333;
 }
 #dokieli-features ul li a {
 display: inline-block;
@@ -810,19 +814,21 @@ width: 100%;
 
 #dokieli-features ul li:hover,
 #dokieli-features ul li:hover span {
-background-color: #444;
+background-color: #ddd;
 }
 #dokieli-features ul i,
 #dokieli-features ul svg {
+/*
 width: 1em;
 height: 1em;
-margin: 0 0.2em;
-padding: 0.3em;
+*/
+margin: 1em;
+/*padding: 0.3em;*/
 text-align: center;
 /*border-radius: 50%;*/
 }
 #dokieli-features ul svg {
-font-size:3em;
+/*font-size:3em;*/
 }
 
 #dokieli-features i img {
@@ -895,7 +901,7 @@ width: 100%;
 #dokieli-features ul li {
 float: left;
 width: 50%;
-padding: 0.6em 0;
+padding: 0.5em 0;
 }
 #dokieli-features ul li:nth-child(odd) {
 text-align:right;
@@ -908,7 +914,7 @@ text-align:left;
 font-size: 1em;
 }
 #dokieli-features ul li span:first-of-type {
-padding-top: 1em;
+margin-top: 0.5em;
 }
 #dokieli-features ul li:nth-child(odd) i,
 #dokieli-features ul li:nth-child(odd) p,
